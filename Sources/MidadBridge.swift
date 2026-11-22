@@ -389,9 +389,10 @@ final class MidadBridge: NSObject, WKScriptMessageHandler, UIDocumentPickerDeleg
     private func presentPicker(purpose: String) {
         pendingPickerPurpose = purpose
         DispatchQueue.main.async {
+            let epubType = UTType(filenameExtension: "epub") ?? .data
             let types: [UTType] = purpose == "audio"
                 ? [.audio, .mp3, .mpeg4Audio]
-                : [.pdf, .epub, .plainText, .html, .data]
+                : [.pdf, epubType, .plainText, .html, .data]
             let picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
             picker.delegate = self
             picker.allowsMultipleSelection = false

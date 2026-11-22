@@ -267,12 +267,11 @@ final class MidadReaderViewController: UIViewController {
         canvasView.isUserInteractionEnabled = penActive
         if penActive {
             selectPenNib()
-            if #available(iOS 14.0, *), let win = view.window {
-                toolPicker = PKToolPicker.shared(for: win)
-                toolPicker?.setVisible(true, forFirstResponder: canvasView)
-                toolPicker?.addObserver(canvasView)
-                canvasView.becomeFirstResponder()
-            }
+            let picker = toolPicker ?? PKToolPicker()
+            toolPicker = picker
+            picker.setVisible(true, forFirstResponder: canvasView)
+            picker.addObserver(canvasView)
+            canvasView.becomeFirstResponder()
         } else {
             toolPicker?.setVisible(false, forFirstResponder: canvasView)
             canvasView.resignFirstResponder()
@@ -373,6 +372,8 @@ final class MidadReaderViewController: UIViewController {
         ac.addAction(UIAlertAction(title: "مشاركة الكتاب", style: .default) { _ in
             guard let url = URL(string: self.uriString) else { return }
             let sh = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            sh.popoverPresentationController?.sourceView = self.topBar
+            sh.popoverPresentationController?.sourceRect = self.topBar.bounds
             self.present(sh, animated: true)
         })
         ac.addAction(UIAlertAction(title: "إغلاق", style: .cancel))
