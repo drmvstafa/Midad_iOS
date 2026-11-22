@@ -135,19 +135,35 @@
             }, timeoutMs);
           }
           try {
-            const r = await fetch('/api/http', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
+            const isLocalPreview = typeof location !== 'undefined'
+              && (location.hostname === '127.0.0.1' || location.hostname === 'localhost')
+              && location.port === '8787';
+            if (isLocalPreview) {
+              const r = await fetch('/api/http', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  method,
+                  url,
+                  payload: payload || null,
+                  headers: o.headers || {},
+                  timeoutMs,
+                }),
+                signal: ctrl ? ctrl.signal : undefined,
+              });
+              done(await r.json());
+            } else if ((method === 'GET' || method === 'HEAD') && /^https?:\/\//i.test(String(url || ''))) {
+              const r = await fetch(url, {
                 method,
-                url,
-                payload: payload || null,
-                headers: o.headers || {},
-                timeoutMs,
-              }),
-              signal: ctrl ? ctrl.signal : undefined,
-            });
-            done(await r.json());
+                mode: 'cors',
+                credentials: 'omit',
+                signal: ctrl ? ctrl.signal : undefined,
+              });
+              const txt = await r.text();
+              done({ code: r.status || 200, url: r.url || url, body: txt });
+            } else {
+              done({ code: 0, error: 'static_host_no_proxy', body: '' });
+            }
           } catch (e) {
             done({ code: 0, error: (e && e.name === 'AbortError') ? 'aborted' : String(e), body: '' });
           } finally {
@@ -197,12 +213,22 @@
       N.downloadNative(JSON.stringify(job));
       return true;
     }
-    const u = '/api/download?url=' + encodeURIComponent(job.url)
-      + '&name=' + encodeURIComponent((job.title || 'book') + '.' + (job.format || 'pdf'))
-      + (job.referer ? '&referer=' + encodeURIComponent(job.referer) : '');
+    const isLocalPreview = typeof location !== 'undefined'
+      && (location.hostname === '127.0.0.1' || location.hostname === 'localhost')
+      && location.port === '8787';
+    const u = isLocalPreview
+      ? ('/api/download?url=' + encodeURIComponent(job.url)
+        + '&name=' + encodeURIComponent((job.title || 'book') + '.' + (job.format || 'pdf'))
+        + (job.referer ? '&referer=' + encodeURIComponent(job.referer) : ''))
+      : String(job.url || '');
+    if (!u) return false;
     const a = document.createElement('a');
     a.href = u;
     a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    if (!isLocalPreview && (job.title || job.format)) {
+      a.download = (String(job.title || 'Midad_Book').replace(/[\\/:*?"<>|]+/g, '_') + '.' + (job.format || 'pdf'));
+    }
     document.body.appendChild(a);
     a.click();
     a.remove();
