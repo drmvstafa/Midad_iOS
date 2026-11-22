@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="مداد">
+<title>مداد | Midad</title>
+<script>
+(function(){
+  try {
+    var d = document.documentElement;
+    var t = localStorage.getItem('wq_theme') || 'sepia';
+    var a = localStorage.getItem('wq_accent') || 'emerald';
+    var m = localStorage.getItem('wq_motion') || 'premium';
+    var dn = localStorage.getItem('wq_density') || 'normal';
+    d.setAttribute('data-theme', t);
+    d.setAttribute('data-accent', a);
+    d.setAttribute('data-motion', m);
+    d.setAttribute('data-density', dn);
+    var bg = t === 'light' ? '#f4f7f6' : (t === 'sepia' ? '#f7f1e3' : '#141517');
+    d.style.backgroundColor = bg;
+  } catch (_) {}
+})();
+</script>
+<link rel="icon" type="image/png" href="icon.png?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="appSplash" class="app-splash" aria-hidden="true">
+  <div class="splash-card">
+    <div class="splash-crest-wrap">
+      <img src="icon.png?v=3" alt="">
+      <span class="splash-ring"></span>
+    </div>
+    <div class="splash-name midad-calligraphy">مداد</div>
+    <div id="splashStatusTxt" class="splash-status">جاري تجهيز مكتبتك...</div>
+    <div class="splash-bar"><span id="splashBarFill" class="splash-bar-fill"></span></div>
+  </div>
+</div>
+<div id="themeTransitionWave" class="theme-wave" aria-hidden="true"></div>
+<div id="appShell" class="app-shell">
+  <!-- Main Workspace -->
+  <div class="workspace">
+    <header class="top-bar">
+      <div class="top-brand" id="btnBrandAbout" role="button" tabindex="0" title="حول مداد والمطور" aria-label="مداد">
+        <svg class="midad-logo-wordmark" viewBox="-1 0 144 46" fill="currentColor" fill-rule="evenodd" aria-hidden="true">
+          <g transform="skewX(-28.6)">
+            <path d="M58.7 0H71V44.5H58.7Z"/>
+            <path d="M24.6 15.5H50.7V34C50.7 41.2 46.8 44.5 39.8 44.5H23.8V34H37.8C39.2 34 39.8 33.4 39.8 31.8V25.5H24.6Z"/>
+            <path d="M77.5 15.5H103.7V34H114.4V23.5C114.4 18.4 117 15.5 122 15.5H149.2V35C149.2 41 145.8 44.5 140.5 44.5H104L102.2 37.5L94 44.5H76.8V34H90C91.6 34 92.4 33.4 92.4 32V25.5H77.5ZM126.8 25.5V34H137V25.5Z"/>
+          </g>
+        </svg>
+      </div>
+
+      <form id="searchForm" class="omni-search" autocomplete="off">
+        <button type="submit" class="omni-go" title="بحث">
+          <svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <input id="q" type="search" placeholder="ابحث عن كتاب أو مؤلف أو موضوع... (أجاثا كريستي، العادات الذرية، Netter)" enterkeyhint="search">
+        <span id="qSpin" class="spin hidden"></span>
+        <button type="button" id="qClear" class="icon-btn sm hidden" title="مسح">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </form>
+
+      <div class="top-actions">
+        <button id="btnTopStreak" class="top-streak-pill mood-eager" title="مهمة القراءة اليومية" aria-label="سلسلة القراءة ومهمة اليوم">
+          <svg class="ic sm" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+          <span id="topStreakCount">0</span>
+        </button>
+        <button id="btnTheme" class="icon-btn top-util-btn" title="تغيير المظهر" aria-label="تغيير المظهر">
+          <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <button id="btnSettings" class="icon-btn top-util-btn" title="الإعدادات والمكتبات" aria-label="الإعدادات">
+          <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="recentSearches" class="recent-bar hidden"></div>
+
+    <main id="mainScroll">
+      <!-- TAB 1: HOME -->
+      <section id="tab-home" class="tab active">
+        <div id="homeTopShowcase" class="home-lead-grid">
+          <div id="heroCarousel" class="hero-card hero-continue-card"></div>
+          <div id="homeLeadSubrow" class="home-lead-subrow no-next hidden">
+            <aside id="heroNextHost" class="hero-next-host hidden"></aside>
+          </div>
+        </div>
+
+        <div id="dailyQuoteStrip" class="daily-quote-strip" aria-live="polite"></div>
+
+        <div id="homeCatPills" class="chips-row"></div>
+
+        <div id="likedSimilarWrap" class="shelf-wrap hidden">
+          <div class="sec-head">
+            <div class="sec-title">
+              <span class="sec-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+              <span id="likedSimilarTitle">كتب شبيهة لما أعجبك</span>
+            </div>
+            <button class="link-btn" data-jump="saved">عرض أعجبني ←</button>
+          </div>
+          <div id="likedSimilarShelf" class="shelf"></div>
+        </div>
+
+        <div id="homeGridWrap" class="shelf-wrap">
+          <div class="sec-head" style="margin-bottom:6px">
+            <div class="sec-title">
+              <span class="sec-icon" id="homeCatIcon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+              <span id="homeGridTitle">مختارات مداد الذكية</span>
+            </div>
+            <button id="btnResetHomeCat" class="link-btn hidden" style="margin-inline-start:auto;margin-inline-end:8px">
+              <span>عرض كل الرئيسية</span>
+            </button>
+            <button id="btnRefreshHome" class="link-btn">
+              <svg class="ic sm" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <span>تحديث</span>
+            </button>
+          </div>
+          <div id="homeSmartToolbar" class="smart-mix-toolbar">
+            <div id="smartMixTabs" class="chips-row sm" role="tablist" aria-label="تصنيف مكتبة مداد الذكية">
+              <button type="button" class="chip on" data-hmix="all">المكتبة الشاملة</button>
+              <button type="button" class="chip" data-hmix="personal">على ذوقك الخاص</button>
+              <button type="button" class="chip" data-hmix="horizon">توسيع الآفاق</button>
+              <button type="button" class="chip" data-hmix="trending">الأكثر رواجاً</button>
+            </div>
+          </div>
+          <div id="trendingCatPills" class="chips-row sm hidden" style="margin-bottom:8px"></div>
+          <div id="homeGrid" class="book-grid"></div>
+        </div>
+      </section>
+
+      <!-- TAB 2: SEARCH -->
+      <section id="tab-search" class="tab">
+        <div class="search-controls">
+          <div id="sourceScope" class="seg-row">
+            <button data-scope="all" class="on">كل المكتبات</button>
+            <button data-scope="arabic">المكتبات العربية</button>
+            <button data-scope="global">المكتبات العالمية</button>
+            <button data-scope="comics">كوميكس ومصورة (عربي وعالمي)</button>
+            <button data-scope="telegram">تيليجرام (قنوات وبوتات)</button>
+            <button data-scope="academic">أكاديمي وطبي (arXiv / PDF)</button>
+            <button data-scope="cf">نور وكتبي وScribd (WebView)</button>
+          </div>
+          <div class="filter-bars">
+            <div id="langFilter" class="chips-row sm">
+              <button data-lang="" class="chip on">كل اللغات</button>
+              <button data-lang="ar" class="chip">عربي</button>
+              <button data-lang="en" class="chip">English</button>
+            </div>
+            <div id="fmtFilter" class="chips-row sm">
+              <button data-fmt="" class="chip on">كل الصيغ</button>
+              <button data-fmt="pdf" class="chip">PDF</button>
+              <button data-fmt="epub" class="chip">EPUB</button>
+              <button data-fmt="cbz" class="chip">CBZ</button>
+              <button data-fmt="azw3" class="chip">AZW3</button>
+              <button data-fmt="mobi" class="chip">MOBI</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="searchStatusBar" class="status-strip hidden"></div>
+        <div id="cfQuickBar" class="cf-banner hidden">
+          <div>
+            <strong>نتائج إضافية من مكتبة نور وكتبي وهنداوي وScribd وAnna's</strong>
+            <small>مواقع محمية بـ Cloudflare أو تسجيل الدخول — تفتح داخل متصفح التطبيق</small>
+          </div>
+          <button id="btnSearchCf" class="btn emerald">
+            <svg class="ic sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+            <span>بحث في نور وكتبي والمحمية</span>
+          </button>
+        </div>
+
+        <div id="searchGrid" class="book-grid"></div>
+        <div id="searchEmpty" class="empty-state">
+          <div class="empty-ic">
+            <svg class="ic lg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+          </div>
+          <h3>ابحث في ١٥+ مكتبة عربية وعالمية</h3>
+          <p>اكتب اسم الكتاب أو المؤلف أو التخصص في الشريط العلوي:</p>
+          <div id="quickPrompts" class="chips-row center"></div>
+        </div>
+      </section>
+
+      <!-- TAB 3: DISCOVER / CATEGORIES -->
+      <section id="tab-discover" class="tab">
+        <div class="sec-head" style="margin-bottom:10px">
+          <div class="sec-title">
+            <span class="sec-icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span>
+            <span>دليل التصنيفات</span>
+          </div>
+          <button type="button" id="btnTasteProfileModal" class="btn glass sm taste-icon-btn" title="تخصيص ذوقك ومعالج الاهتمامات" aria-label="تخصيص ذوقك">
+            <svg class="ic sm" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            <span>معالج الذوق</span>
+          </button>
+        </div>
+
+        <div id="catCards" class="cat-grid"></div>
+
+        <div class="sec-head" style="margin-bottom:6px">
+          <div class="sec-title" id="discTitle">كتب مختارة</div>
+          <button id="btnLoadMoreCat" class="link-btn">جلب المزيد من المكتبات</button>
+        </div>
+        <div id="discSubCats" class="chips-row sm" style="margin-bottom:10px"></div>
+        <div id="discGrid" class="book-grid"></div>
+
+        <section id="telegramHubSection" class="tg-hub-panel">
+          <button type="button" id="tgHubToggleBtn" class="tg-hub-toggle" aria-expanded="false">
+            <span class="tg-hub-toggle-main">
+              <svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+              <span>بوتات وقنوات تيليجرام</span>
+              <span id="tgHubCountBadge" class="lib-stat-chip"></span>
+            </span>
+            <svg class="ic sm tg-hub-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="tgHubBody" class="tg-hub-body hidden">
+            <div class="tg-add-row">
+              <input id="tgCustomInput" type="text" placeholder="أضف معرّف قناة أو بوت (@ketab_n...)" dir="ltr">
+              <button id="tgAddBtn" class="btn emerald sm" type="button">إضافة</button>
+            </div>
+            <div id="tgHubGrid" class="tg-hub-grid"></div>
+          </div>
+        </section>
+      </section>
+
+      <!-- TAB 4: SAVED / LIKED -->
+      <section id="tab-saved" class="tab">
+        <div class="seg-row" id="savedSeg">
+          <button data-saved="liked" class="on">أعجبتني</button>
+          <button data-saved="bookmarks">المحفوظة للقراءة</button>
+          <button data-saved="history">شاهدتها مؤخراً</button>
+        </div>
+        <div id="savedGrid" class="book-grid"></div>
+        <div id="savedEmpty" class="empty-state hidden">
+          <div class="empty-ic">
+            <svg class="ic lg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h3>لا توجد كتب هنا بعد</h3>
+          <p>اضغط على القلب في أي كتاب بالرئيسية أو من كتبك المحمّلة في صفحة الملفات ليظهر هنا مع ترشيحات مشابهة.</p>
+        </div>
+      </section>
+
+      <!-- TAB 5: DOWNLOADS & BUILT-IN READER -->
+      <section id="tab-downloads" class="tab">
+        <div class="lib-hero">
+          <div class="lib-hero-main">
+            <div class="lib-hero-icon">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="lib-hero-copy">
+              <div class="lib-hero-titleline">
+                <h3>مكتبتي والقراءة الداخلية</h3>
+                <small id="dlFolderHint">كتبك فقط (يُستبعد أقل من ١٠ صفحات)</small>
+              </div>
+              <div id="libStatsRow" class="lib-stats-row"></div>
+            </div>
+          </div>
+
+          <div class="lib-hero-acts">
+            <button id="btnScanDevice" class="btn glass sm">
+              <svg class="ic sm" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg>
+              <span>فحص كتب الجهاز</span>
+            </button>
+            <button id="btnPickLocal" class="btn emerald sm">
+              <svg class="ic sm" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span>فتح كتاب</span>
+            </button>
+            <div class="lib-more-wrap">
+              <button id="btnLibMore" class="icon-btn sm" title="خيارات المكتبة">
+                <svg class="ic sm" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></svg>
+              </button>
+              <div id="libMoreMenu" class="lib-pop-menu hidden">
+                <button type="button" id="btnAddFolderMenu" class="lib-pop-item">
+                  <svg class="ic sm" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                  <span>ربط مجلد كتب (Download / Telegram...)</span>
+                </button>
+                <button type="button" id="btnUnhideBooks" class="lib-pop-item">
+                  <svg class="ic sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <span>إظهار الكتب المخفية من البرنامج</span>
+                </button>
+                <button type="button" id="btnDedupAll" class="lib-pop-item">
+                  <svg class="ic sm" viewBox="0 0 24 24"><rect x="3" y="3" width="13" height="15" rx="2"/><path d="M8 8h11a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H10"/><path d="M9 12l6 6M15 12l-6 6"/></svg>
+                  <span>حذف النسخ المكررة من المكتبة</span>
+                </button>
+                <button type="button" id="btnClearDone" class="lib-pop-item danger">
+                  <svg class="ic sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                  <span>تنظيف سجل التحميلات المكتملة</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="libAccessBanner" class="lib-access-banner hidden">
+          <div>
+            <strong>إتاحة فحص جميع الكتب على التابلت</strong>
+            <small>لجمع ملفات PDF وEPUB وAZW3 من التنزيلات وتيليجرام والكتب تلقائياً، امنح صلاحية الملفات أو حدّد مجلد الكتب.</small>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" id="btnGrantStorage" class="btn emerald sm">السماح بفحص الجهاز</button>
+            <button type="button" id="btnPickFolderBanner" class="btn glass sm">تحديد مجلد</button>
+          </div>
+        </div>
+
+        <div id="dlActiveWrap" class="hidden" style="margin-bottom:12px">
+          <div class="sec-head" style="margin-bottom:6px">
+            <div class="sec-title">
+              <span class="sec-icon"><svg class="ic sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+              <span>التحميلات الجارية</span>
+            </div>
+          </div>
+          <div id="dlActiveList" class="dl-list"></div>
+        </div>
+
+        <div id="libToolbar" class="lib-toolbar hidden">
+          <div class="lib-toolbar-row">
+            <div class="lib-search-box">
+              <svg class="ic sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input id="libSearchInput" type="search" placeholder="ابحث داخل كتبك..." autocomplete="off">
+            </div>
+            <div class="lib-toolbar-ctrls">
+              <select id="libSortSelect" class="lib-sort-select" aria-label="ترتيب الكتب">
+                <option value="smart">ترتيب: الأهم وقيد القراءة</option>
+                <option value="newest">ترتيب: الأحدث إضافةً</option>
+                <option value="title_asc">ترتيب: الاسم (أ - ي)</option>
+                <option value="size_desc">ترتيب: الأكبر حجماً</option>
+                <option value="copies_desc">ترتيب: النسخ المتعددة أولاً</option>
+              </select>
+              <div class="seg-row lib-view-seg" id="libViewSeg" role="group" aria-label="طريقة عرض المكتبة">
+                <button type="button" data-lview="detailed" class="on">تفصيلي</button>
+                <button type="button" data-lview="compact">شبكة أغلفة</button>
+              </div>
+              <button type="button" id="btnNewLibFolder" class="btn glass sm" title="تجميع كتب في مجلد مخصص">
+                <svg class="ic sm" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                <span>مجلد جديد</span>
+              </button>
+            </div>
+          </div>
+          <div id="libFilterPills" class="chips-row sm lib-filter-pills"></div>
+        </div>
+
+        <div id="libFolderBar" class="lib-folder-bar hidden">
+          <div class="lib-folder-crumb">
+            <button type="button" id="btnLibBackRoot" class="btn glass sm">
+              <svg class="ic sm" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              <span>كل الكتب</span>
+            </button>
+            <span id="libFolderCrumbName" class="lib-folder-crumb-name"></span>
+            <span id="libFolderCrumbCount" class="lib-stat-chip"></span>
+          </div>
+          <div class="lib-folder-bar-acts">
+            <button type="button" id="btnLibEditFolder" class="btn emerald sm">إدارة وتسمية المجلد</button>
+            <button type="button" id="btnLibUngroupFolder" class="btn glass sm">فك المجلد</button>
+          </div>
+        </div>
+
+        <div id="libGroupedGrid" class="lib-grid"></div>
+          <div id="dlEmpty" class="empty-state hidden">
+          <div class="empty-ic">
+            <svg class="ic lg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <h3>لا توجد ملفات أو تحميلات ظاهرة بعد</h3>
+          <p>اضغط «فحص كتب الجهاز» أو «فتح كتاب» لإضافة كتبك وقراءتها فوراً داخل قارئ مداد.</p>
+        </div>
+      </section>
+
+      <!-- TAB 6: AUDIOBOOKS (ONLINE STREAM + OFFLINE DEVICE DOWNLOAD) -->
+      <section id="tab-audiobooks" class="tab">
+        <div class="ab-hero">
+          <div class="ab-hero-main">
+            <div class="ab-hero-ic" aria-hidden="true">
+              <svg class="ic sm" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+            </div>
+            <div class="ab-hero-copy">
+              <div class="ab-hero-titleline">
+                <h3>الكتب المسموعة</h3>
+                <span class="ab-widget-hint">ويدجت</span>
+              </div>
+              <small>استمع أونلاين أو حمّل للاستماع بدون نت</small>
+            </div>
+          </div>
+          <div class="ab-hero-acts">
+            <button type="button" id="btnPickLocalAudio" class="btn emerald sm">
+              <svg class="ic sm" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              <span>ملف صوتي</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="abPlayerCard" class="ab-player-card hidden">
+          <div class="ab-pl-top">
+            <div class="ab-pl-cov" id="abPlayerCov">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+            </div>
+            <div class="ab-pl-info">
+              <div class="ab-pl-badges">
+                <span id="abPlayerModeBadge" class="ab-mode-badge">بث عبر الإنترنت</span>
+                <span id="abPlayerChapterLbl" class="ab-pl-chap"></span>
+              </div>
+              <strong id="abPlayerTitle" class="ab-pl-title">كتاب مسموع</strong>
+              <span id="abPlayerAuthor" class="ab-pl-author"></span>
+            </div>
+            <div class="ab-pl-top-acts">
+              <button type="button" id="abSleepBtn" class="btn glass sm ab-sleep-btn" title="مؤقت النوم">نوم</button>
+              <button type="button" id="abSpeedBtn" class="btn glass sm ab-spd-btn" title="تغيير سرعة القراءة">1.0x</button>
+            </div>
+          </div>
+          <div class="ab-pl-seek-row">
+            <span id="abCurTime" class="ab-time-txt">00:00</span>
+            <input type="range" id="abSeekRange" class="ab-seek-slider" min="0" max="1000" value="0" aria-label="تقديم وتأخير الصوت">
+            <span id="abDurTime" class="ab-time-txt">00:00</span>
+          </div>
+          <div class="ab-pl-ctrls" dir="ltr">
+            <button type="button" id="abPrevCh" class="icon-btn sm" title="الفصل السابق" aria-label="الفصل السابق">
+              <svg class="ic sm" viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+            </button>
+            <button type="button" id="abRew15" class="btn glass sm ab-delta-btn" title="ترجيع 15 ثانية">-15s</button>
+            <button type="button" id="abPlayToggle" class="ab-play-main-btn" title="تشغيل أو إيقاف" aria-label="تشغيل أو إيقاف">
+              <svg class="ic" id="abPlayMainIc" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/></svg>
+            </button>
+            <button type="button" id="abFwd15" class="btn glass sm ab-delta-btn" title="تقديم 15 ثانية">+15s</button>
+            <button type="button" id="abNextCh" class="icon-btn sm" title="الفصل التالي" aria-label="الفصل التالي">
+              <svg class="ic sm" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="ab-toolbar">
+          <form id="abSearchForm" class="ab-search-box" autocomplete="off">
+            <svg class="ic sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="abSearchInput" type="search" placeholder="ابحث عن كتاب مسموع بالعربية أو الإنجليزية..." autocomplete="off">
+            <button type="button" id="abSearchClear" class="icon-btn sm hidden" title="مسح">
+              <svg class="ic sm" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+            <button type="submit" id="abSearchGo" class="btn emerald sm">بحث</button>
+          </form>
+          <div class="seg-row ab-mode-seg" id="abModeSeg" role="tablist" aria-label="وضع الاستماع">
+            <button type="button" data-abmode="all" class="on">الكل</button>
+            <button type="button" data-abmode="online">عبر الإنترنت (بث)</button>
+            <button type="button" data-abmode="offline">محمل على جهازي (أوفلاين)</button>
+          </div>
+          <div id="abCatPills" class="chips-row sm ab-cat-pills" style="padding:0">
+            <button type="button" class="chip on" data-abcat="all">الكل</button>
+            <button type="button" class="chip" data-abcat="free">كتب مجانية</button>
+            <button type="button" class="chip" data-abcat="latest">أحدث الكتب</button>
+            <button type="button" class="chip" data-abcat="popular">الأكثر استماعاً</button>
+            <button type="button" class="chip" data-abcat="ar">كتب عربية</button>
+            <button type="button" class="chip" data-abcat="en">كتب إنجليزية</button>
+            <button type="button" class="chip" data-abcat="fiction">روايات وقصص</button>
+            <button type="button" class="chip" data-abcat="self_dev">تطوير الذات والإدارة</button>
+            <button type="button" class="chip" data-abcat="science_med">كتب طبية وعلمية</button>
+            <button type="button" class="chip" data-abcat="summaries">ملخصات وبودكاست</button>
+          </div>
+        </div>
+
+        <div id="abOfflineWrap" class="ab-offline-wrap hidden">
+          <div class="sec-head" style="margin-bottom:8px">
+            <div class="sec-title">
+              <span class="sec-icon"><svg class="ic sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+              <span>محمل للاستماع بدون إنترنت</span>
+            </div>
+            <span id="abOfflineCountBadge" class="lib-stat-chip"></span>
+          </div>
+          <div id="abOfflineList" class="ab-offline-list"></div>
+        </div>
+
+        <div class="sec-head" style="margin-bottom:8px">
+          <div class="sec-title" id="abCatalogTitle">مكتبة الكتب المسموعة</div>
+          <span id="abStatusHint" class="sec-sub"></span>
+        </div>
+        <div id="abGrid" class="ab-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="abMiniBar" class="ab-mini-bar hidden" role="region" aria-label="شريط تشغيل الكتاب المسموع">
+    <div class="ab-mini-top">
+      <button type="button" id="abMiniPlayBtn" class="ab-mini-play" aria-label="تشغيل أو إيقاف">
+        <svg class="ic sm" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/></svg>
+      </button>
+      <div id="abMiniOpen" class="ab-mini-info">
+        <strong id="abMiniTitle">كتاب مسموع</strong>
+        <span id="abMiniSub">جاري الاستماع</span>
+      </div>
+      <div class="ab-mini-jumps" dir="ltr">
+        <button type="button" id="abMiniRew15" class="btn glass sm ab-mini-delta" title="ترجيع 15 ثانية">-15s</button>
+        <button type="button" id="abMiniFwd15" class="btn glass sm ab-mini-delta" title="تقديم 15 ثانية">+15s</button>
+      </div>
+      <button type="button" id="abMiniClose" class="icon-btn sm" aria-label="إيقاف">
+        <svg class="ic sm" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="ab-mini-seek-row" dir="ltr">
+      <span id="abMiniCurTime" class="ab-time-txt">00:00</span>
+      <input type="range" id="abMiniSeekRange" class="ab-seek-slider ab-mini-slider" min="0" max="1000" value="0" aria-label="تقديم وتأخير الصوت">
+      <span id="abMiniDurTime" class="ab-time-txt">00:00</span>
+    </div>
+  </div>
+
+  <!-- Sleek Floating Glass Navigation Dock (Tablet / Desktop Capsule + Mobile Bottom Bar) -->
+  <nav id="navRail" class="nav-dock" aria-label="التنقل الرئيسي">
+    <div class="nav-items">
+      <button data-tab="home" class="nav-btn on">
+        <svg class="ic" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>الرئيسية</span>
+      </button>
+      <button data-tab="search" class="nav-btn">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+        <span>البحث</span>
+      </button>
+      <button data-tab="discover" class="nav-btn">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span>التصنيفات</span>
+      </button>
+      <button data-tab="audiobooks" class="nav-btn">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+        <span>المسموعة</span>
+      </button>
+      <button data-tab="saved" class="nav-btn">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span>المفضلة</span>
+      </button>
+      <button data-tab="downloads" class="nav-btn">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>الملفات</span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<!-- Audiobook Chapters & Dual Listen/Download Modal -->
+<div id="audiobookModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="abModalBackdrop"></div>
+  <div class="modal-sheet">
+    <div class="modal-top">
+      <button id="abModalClose" class="icon-btn" title="إغلاق" aria-label="إغلاق">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <span id="abModalTopTitle" class="modal-top-title">تفاصيل الكتاب المسموع</span>
+      <span></span>
+    </div>
+    <div id="abModalBody" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- Book Detail Modal -->
+<div id="bookModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal-sheet">
+    <div class="modal-top">
+      <button id="modalClose" class="icon-btn" title="إغلاق">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+      <span id="modalTopTitle" class="modal-top-title">تفاصيل الكتاب</span>
+      <div class="modal-top-acts">
+        <button id="modalLike" class="icon-btn" title="أعجبني (ترشيح مشابه)">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <button id="modalSave" class="icon-btn" title="حفظ للقراءة">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <button id="modalCopy" class="icon-btn" title="نسخ الرابط">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="modalBody" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- Author Hub Modal (Author Bio + Complete Works) -->
+<div id="authorModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="authorBackdrop"></div>
+  <div class="modal-sheet">
+    <div class="modal-top">
+      <button id="authorClose" class="icon-btn" title="رجوع">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+      <span id="authorTopTitle" class="modal-top-title">صفحة الكاتب</span>
+      <button id="authorSearchAll" class="pill-btn">بحث شامل باسم الكاتب</button>
+    </div>
+    <div id="authorBody" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- Settings & Library Status Dialog -->
+<div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="setBackdrop"></div>
+  <div class="modal-sheet settings-sheet">
+    <div class="modal-top">
+      <button id="setClose" class="icon-btn"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <span class="modal-top-title">إعدادات مداد والمكتبات</span>
+      <span></span>
+    </div>
+    <div id="setBody" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- About Developer Dialog -->
+<div id="aboutModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Developer Information">
+  <div class="modal-backdrop" id="aboutBackdrop"></div>
+  <div class="modal-sheet about-sheet">
+    <div class="modal-top">
+      <button id="aboutClose" class="icon-btn" aria-label="إغلاق"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <span class="modal-top-title">About Midad</span>
+      <span></span>
+    </div>
+    <div class="modal-body" style="padding:18px">
+      <div class="about-card">
+        <img class="about-crest" src="icon.png?v=3" alt="Midad">
+        <div class="about-app-name">Midad — مداد</div>
+        <p class="about-dev-line" dir="ltr">Developed by <strong>Mostafa Mostafa</strong></p>
+        <div class="about-links" dir="ltr">
+          <button type="button" id="aboutWhatsappBtn" class="about-link-btn">
+            <span class="about-link-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              <span>WhatsApp</span>
+            </span>
+            <span class="about-link-val">+201027608911</span>
+          </button>
+          <button type="button" id="aboutInstagramBtn" class="about-link-btn">
+            <span class="about-link-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              <span>Instagram</span>
+            </span>
+            <span class="about-link-val">m.o.s.9.a.f.a</span>
+          </button>
+          <button type="button" id="aboutDonateBtn" class="about-link-btn about-donate-btn">
+            <span class="about-link-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              <span>Donate</span>
+            </span>
+            <span class="about-link-val">InstaPay</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Daily Reading Mission & Companion Modal -->
+<div id="habitModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="مهمة اليوم">
+  <div class="modal-backdrop" id="habitBackdrop"></div>
+  <div class="modal-sheet habit-sheet">
+    <div class="modal-top">
+      <button id="habitClose" class="icon-btn" aria-label="إغلاق"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <span class="modal-top-title">مهمة اليوم وسلسلة القراءة</span>
+      <span></span>
+    </div>
+    <div class="modal-body" style="padding:14px">
+      <aside id="homeCompanionHost" class="companion-host"></aside>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Dialog Modal -->
+<div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="confirmBackdrop"></div>
+  <div class="modal-sheet small" style="width:min(440px,100%)">
+    <div class="modal-top">
+      <span id="confirmTitle" class="modal-top-title">تأكيد الإجراء</span>
+      <button id="confirmClose" class="icon-btn"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" style="padding:18px">
+      <p id="confirmMsg" style="margin:0 0 18px;font-size:13.5px;line-height:1.7;color:var(--muted)"></p>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button type="button" id="confirmCancel" class="btn glass">إلغاء</button>
+        <button type="button" id="confirmOk" class="btn danger-solid">تأكيد</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Book Scope Modal ("من البرنامج ولا الجهاز؟") -->
+<div id="bookDeleteModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="delBookBackdrop"></div>
+  <div class="modal-sheet small" style="width:min(460px,100%)">
+    <div class="modal-top">
+      <span class="modal-top-title">حذف الكتاب</span>
+      <button id="delBookClose" class="icon-btn"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" style="padding:18px">
+      <div style="margin-bottom:14px">
+        <strong id="delBookTitle" style="display:block;font-size:15px;margin-bottom:4px"></strong>
+        <small id="delBookMeta" style="color:var(--muted);font-size:12px"></small>
+      </div>
+      <div class="choice-stack">
+        <button type="button" id="btnDelFromApp" class="choice-opt-btn">
+          <div>
+            <strong>حذف من البرنامج فقط</strong>
+            <small>يُزال من مكتبة مداد وسجلّه، ويبقى الملف محفوظاً على التابلت</small>
+          </div>
+        </button>
+        <button type="button" id="btnDelFromDevice" class="choice-opt-btn danger">
+          <div>
+            <strong>حذف نهائي من الجهاز</strong>
+            <small>يمسح ملف الكتاب نهائياً من ذاكرة التابلت ومن البرنامج معاً</small>
+          </div>
+        </button>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px">
+        <button type="button" id="delBookCancel" class="btn glass">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Taste Profile & Wizard Settings Modal -->
+<div id="tasteProfileModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="tasteProfileBackdrop"></div>
+  <div class="modal-sheet small" style="width:min(540px,100%)">
+    <div class="modal-top">
+      <span class="modal-top-title">خريطة اهتماماتك ومعالج الذوق</span>
+      <button id="tasteProfileClose" class="icon-btn" aria-label="إغلاق"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" style="padding:16px">
+      <p style="margin:0 0 10px;font-size:12.5px;color:var(--muted)">يتم تحديث ترشيحات مداد تلقائياً بناءً على تقييماتك وقراءاتك الحالية:</p>
+      <div id="tastePills" class="chips-row" style="margin-bottom:10px"></div>
+      <div id="tasteCohortsRow" class="cohort-strip" style="margin-bottom:14px"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--line)">
+        <button type="button" id="btnOpenColdStart" class="btn emerald sm">معالج الذوق السريع</button>
+        <button type="button" id="btnClearTaste" class="btn glass sm">إعادة ضبط الاهتمامات</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Book Modal -->
+<div id="renameBookModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="renameBookBackdrop"></div>
+  <div class="modal-sheet small" style="width:min(440px,100%)">
+    <div class="modal-top">
+      <span class="modal-top-title">تعديل اسم الكتاب</span>
+      <button id="renameBookClose" class="icon-btn"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" style="padding:18px">
+      <label class="lib-fld-lbl" for="renameBookInput">الاسم الجديد للكتاب</label>
+      <input id="renameBookInput" type="text" class="lib-fld-input" placeholder="اكتب اسم الكتاب الصحيح..." autocomplete="off">
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+        <button type="button" id="renameBookReset" class="btn glass sm" style="margin-inline-end:auto">الاسم الأصلي</button>
+        <button type="button" id="renameBookCancel" class="btn glass">إلغاء</button>
+        <button type="button" id="renameBookSave" class="btn emerald">حفظ الاسم</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="pickCopyModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="pickCopyBackdrop"></div>
+  <div class="modal-sheet small" style="width:min(500px,100%)">
+    <div class="modal-top">
+      <span class="modal-top-title">اختر نسخة الكتاب للقراءة</span>
+      <button id="pickCopyClose" class="icon-btn"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" style="padding:18px">
+      <p id="pickCopySub" style="margin:0 0 12px;font-size:13px;color:var(--muted)"></p>
+      <div id="pickCopyDedupBar" class="pick-copy-dedup-bar hidden">
+        <span id="pickCopyDedupInfo" style="font-size:12px;color:var(--muted)"></span>
+        <button type="button" id="btnPickCopyDedup" class="btn danger sm">حذف النسخ المكررة والإبقاء على الأفضل</button>
+      </div>
+      <div id="pickCopyList" class="copy-pick-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Library Folder Creator / Editor Modal -->
+<div id="libFolderModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="libFolderBackdrop"></div>
+  <div class="modal-sheet small" style="width:min(540px,100%)">
+    <div class="modal-top">
+      <span id="libFolderModalTitle" class="modal-top-title">إنشاء مجلد كتب</span>
+      <button id="libFolderClose" class="icon-btn"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" style="padding:16px">
+      <label class="lib-fld-lbl" for="libFolderNameInput">اسم المجلد</label>
+      <input id="libFolderNameInput" type="text" class="lib-fld-input" placeholder="مثال: رواياتي المفضلة، مكتبة الطب...">
+      <div class="lib-fld-pick-head">
+        <span id="libFolderPickCount" style="font-size:12.5px;color:var(--muted)">اختر الكتب المراد تجميعها في هذا المجلد</span>
+        <input id="libFolderBookFilter" type="search" class="lib-fld-filter" placeholder="بحث سريع في الكتب...">
+      </div>
+      <div id="libFolderBookList" class="lib-fld-book-list"></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+        <button type="button" id="libFolderCancel" class="btn glass">إلغاء</button>
+        <button type="button" id="libFolderSave" class="btn emerald">حفظ المجلد</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Long-Press Book / Folder Actions Sheet Modal -->
+<div id="libBookActionsModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="libBookActBackdrop"></div>
+  <div class="modal-sheet small" style="width:min(470px,100%)">
+    <div class="modal-top">
+      <span id="libBookActHead" class="modal-top-title">خيارات الكتاب</span>
+      <button id="libBookActClose" class="icon-btn"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="libBookActBody" class="modal-body" style="padding:16px"></div>
+  </div>
+</div>
+
+<!-- Scribd & Cloud In-App Full-Screen Reading Mode Overlay -->
+<div id="scribdReaderModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="scribdReaderBackdrop"></div>
+  <div class="modal-sheet sreader-sheet">
+    <div class="sreader-topbar">
+      <button type="button" id="closeScribdReader" class="icon-btn" title="إغلاق وضع القراءة">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="sreader-title-wrap">
+        <div id="scribdReaderTitle" class="sreader-title">وضع القراءة</div>
+        <div id="scribdReaderDlPill" class="sreader-dl-pill">تم الحفظ في المكتبة</div>
+      </div>
+      <div class="sreader-actions">
+        <button type="button" id="sreaderZoomOut" class="sreader-ctrl-btn" title="تصغير">A−</button>
+        <button type="button" id="sreaderZoomReset" class="sreader-ctrl-btn" title="الحجم الافتراضي">100%</button>
+        <button type="button" id="sreaderZoomIn" class="sreader-ctrl-btn" title="تكبير">A+</button>
+        <button type="button" id="sreaderBookmarkBtn" class="sreader-ctrl-btn" title="حفظ علامة">تعليم</button>
+        <button type="button" class="sreader-theme-btn" data-sreader-theme="dark">داكن</button>
+        <button type="button" class="sreader-theme-btn active" data-sreader-theme="sepia">دافئ</button>
+        <button type="button" class="sreader-theme-btn" data-sreader-theme="sage">مريح</button>
+        <button type="button" class="sreader-theme-btn" data-sreader-theme="light">نهاري</button>
+        <button type="button" id="scribdReaderNativeBtn" class="btn emerald sm">القارئ الكامل</button>
+      </div>
+    </div>
+    <div id="scribdReaderBody" class="sreader-body theme-sepia">
+      <div id="scribdReaderLoading" class="sreader-loading">
+        <div class="spinner"></div>
+        <span>جاري تجهيز وضع القراءة الكامل والحفظ في مكتبتك...</span>
+      </div>
+      <div class="sreader-frame-clip">
+        <iframe id="scribdReaderFrame" class="sreader-frame" referrerpolicy="no-referrer" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cold Start Onboarding Wizard Modal -->
+<div id="coldStartModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="coldStartBackdrop"></div>
+  <div class="modal-sheet cs-sheet">
+    <div class="modal-top">
+      <button type="button" id="coldStartClose" class="icon-btn" title="تخطي">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <span class="modal-top-title">بناء ذوقك الشخصي في ثوانٍ</span>
+      <button type="button" id="coldStartSkipTop" class="link-btn">تخطي الآن</button>
+    </div>
+    <div class="modal-body cs-modal-body">
+      <p class="cs-lead">اختر طول الكتب وتصنيفاتك وكتبك المفضلة لبناء ترشيحات مخصّصة لك فوراً.</p>
+
+      <div id="csLenSection" class="cs-len-section">
+        <div class="cs-step-head">
+          <strong>1. بتحب الكتب القصيرة ولا الطويلة؟</strong>
+          <span id="csLenBadge" class="cs-counter ready">الاثنان</span>
+        </div>
+        <div id="csLenGrid" class="cs-len-grid">
+          <button type="button" class="cs-cat-card cs-len-card" data-cslen="short">
+            <div><strong>كتب قصيرة (&lt; 250 صفحة)</strong><small>قراءة سريعة ومكثفة</small></div>
+          </button>
+          <button type="button" class="cs-cat-card cs-len-card" data-cslen="long">
+            <div><strong>كتب طويلة (250+ صفحة)</strong><small>محتوى معمّق وموسّع</small></div>
+          </button>
+          <button type="button" class="cs-cat-card cs-len-card" data-cslen="all">
+            <div><strong>الاثنان معاً</strong><small>مزيج متنوع حسب وقتك</small></div>
+          </button>
+        </div>
+      </div>
+
+      <div id="csCatSection" class="cs-cat-section">
+        <div class="cs-step-head">
+          <strong>2. اختر 3 تصنيفات مفضلة</strong>
+          <div style="display:inline-flex;align-items:center;gap:6px">
+            <button type="button" id="csCatToggleBtn" class="link-btn cs-cat-toggle">إخفاء ↑</button>
+            <span id="csCatCounter" class="cs-counter">0 / 3</span>
+          </div>
+        </div>
+        <div id="csCatGrid" class="cs-cat-grid"></div>
+      </div>
+
+      <div class="cs-step-head cs-books-head">
+        <strong>3. حدّد 3 كتب أعجبتك سابقاً</strong>
+        <span id="csBookCounter" class="cs-counter">0 / 3</span>
+      </div>
+      <input id="csBookSearch" type="search" class="lib-fld-input cs-search" placeholder="ابحث عن كتاب مفضل (مثال: العادات الذرية، المخ الأبله...)" autocomplete="off">
+      <div id="csBookGrid" class="cs-book-grid"></div>
+
+      <div class="cs-footer">
+        <button type="button" id="btnColdStartSkip" class="btn glass sm">تخطي مؤقتاً</button>
+        <button type="button" id="btnColdStartApply" class="btn emerald sm">بناء قائمة الترشيحات الذكية</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="bridge.js"></script>
+<script src="catalog.js"></script>
+<script src="sources.js"></script>
+<script src="recommender.js"></script>
+<script src="reading_habit.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+name: Build Midad iOS (.ipa)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Build unsigned Release .app
+        run: |
+          xcodebuild \
+            -project Midad.xcodeproj \
+            -scheme Midad \
+            -configuration Release \
+            -sdk iphoneos \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CONFIGURATION_BUILD_DIR=build/Release-iphoneos \
+            build
+
+      - name: Package Midad-iOS.ipa (for AltStore / SideStore / Sideloadly)
+        run: |
+          mkdir -p build/Payload
+          cp -r build/Release-iphoneos/Midad.app build/Payload/
+          cd build
+          zip -r Midad-iOS.ipa Payload
+
+      - name: Upload Midad-iOS.ipa artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Midad-iOS-IPA
+          path: build/Midad-iOS.ipa
